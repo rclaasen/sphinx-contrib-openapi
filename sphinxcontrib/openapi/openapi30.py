@@ -282,7 +282,10 @@ def _httpresource(endpoint, method, properties, convert, render_examples,
     # print request's query params
     for param in filter(lambda p: p['in'] == 'query', parameters):
         yield indent + ':query {type} {name}:'.format(
-            type=param['schema']['type'],
+            # HACK: skip unknown type, for instance for enum parameters
+            # This should be solved using type lookup (allOf, anyOf)
+            type=param['schema'].get('type', ),
+            # type=param['schema']['type'],
             name=param['name'])
         for line in convert(param.get('description', '')).splitlines():
             yield '{indent}{indent}{line}'.format(**locals())
